@@ -24,6 +24,12 @@ func main() {
 
 	window.MakeContextCurrent()
 
+	// instance, err := tiny_gltf.NewInstanceFromFile("pkg/tiny_gltf/testdata/minimal.gltf")
+	// if err != nil {
+	// 	fmt.Fprintln(os.Stderr, err)
+	// 	os.Exit(1)
+	// }
+
 	for !window.ShouldClose() {
 		window.SwapBuffers()
 		glfw.PollEvents()
