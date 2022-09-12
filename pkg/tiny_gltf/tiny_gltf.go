@@ -51,26 +51,26 @@ func NewInstance(reader io.Reader) (*Instance, error) {
 }
 
 func (instance *Instance) initData() error {
+	// NOTE: init bufferDataList
+	for _, accessor := range instance.rawData.Accessors {
+		bufferData, err := NewBufferData(instance.rawData.Buffers, instance.rawData.BufferViews, accessor)
+		if err != nil {
+			return fmt.Errorf("failed NewBufferData: %w", err)
+		}
+		instance.bufferDataList = append(instance.bufferDataList, bufferData)
+	}
+
 	for _, node := range instance.rawData.Scenes[instance.rawData.Scene].Nodes {
 		mesh := instance.rawData.Nodes[node].Mesh
 		for _, prim := range instance.rawData.Meshes[mesh].Primitives {
-			// TODO: refactor
-			accessor := instance.rawData.Accessors[prim.Indices]
-
-			bufferData, err := NewBufferData(instance.rawData.Buffers, instance.rawData.BufferViews, accessor)
-			if err != nil {
-				return fmt.Errorf("failed NewBufferData: %w", err)
+			if prim.Indices != nil {
+				// TODO: set index data
+				fmt.Printf("indexdata: %+v\n", instance.bufferDataList[*prim.Indices])
 			}
 
-			// TODO: refactor init only BufferData
-			instance.bufferDataList = append(instance.bufferDataList, bufferData)
-			for _, index := range prim.Attributes {
-				accessor := instance.rawData.Accessors[index]
-				bufferData, err := NewBufferData(instance.rawData.Buffers, instance.rawData.BufferViews, accessor)
-				if err != nil {
-					return fmt.Errorf("failed NewBufferData: %w", err)
-				}
-				instance.bufferDataList = append(instance.bufferDataList, bufferData)
+			for attribute, index := range prim.Attributes {
+				// TODO: set index data
+				fmt.Printf("%s: %+v\n", attribute, instance.bufferDataList[index])
 			}
 		}
 	}

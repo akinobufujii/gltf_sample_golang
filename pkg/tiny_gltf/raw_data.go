@@ -29,7 +29,7 @@ type Nodes struct {
 
 type Primitives struct {
 	Attributes map[string]int `json:"attributes"`
-	Indices    int            `json:"indices"`
+	Indices    *int           `json:"indices"`
 }
 
 type Meshes struct {
