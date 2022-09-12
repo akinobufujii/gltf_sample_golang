@@ -27,13 +27,9 @@ type Nodes struct {
 	Mesh int `json:"mesh"`
 }
 
-type Attributes struct {
-	Position int `json:"POSITION"`
-}
-
 type Primitives struct {
-	Attributes Attributes `json:"attributes"`
-	Indices    int        `json:"indices"`
+	Attributes map[string]int `json:"attributes"`
+	Indices    int            `json:"indices"`
 }
 
 type Meshes struct {
