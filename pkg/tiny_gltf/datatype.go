@@ -71,22 +71,16 @@ func convertAccessorTypeKindFromString(kind string) AccessorTypeKind {
 	switch kind {
 	case "SCALAR":
 		return AccessorTypeKind_SCALAR
-
 	case "VEC2":
 		return AccessorTypeKind_VEC2
-
 	case "VEC3":
 		return AccessorTypeKind_VEC3
-
 	case "VEC4":
 		return AccessorTypeKind_VEC4
-
 	case "MAT2":
 		return AccessorTypeKind_MAT2
-
 	case "MAT3":
 		return AccessorTypeKind_MAT3
-
 	case "MAT4":
 		return AccessorTypeKind_MAT4
 	}
