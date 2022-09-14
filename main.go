@@ -14,10 +14,8 @@ func init() {
 }
 
 func main() {
-
-	err := glfw.Init()
-	if err != nil {
-		fmt.Println(err)
+	if err := glfw.Init(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 	defer glfw.Terminate()
@@ -27,7 +25,7 @@ func main() {
 
 	window, err := glfw.CreateWindow(640, 480, "gltf_samples", nil, nil)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 
@@ -47,29 +45,20 @@ func main() {
 	// }
 
 	var vertexbuffer uint32
-	g_vertex_buffer_data := []float32{
+	vertexbufferdata := []float32{
 		-1.0, -1.0, 0.0,
 		1.0, -1.0, 0.0,
 		0.0, 1.0, 0.0,
 	}
 	gl.GenBuffers(1, &vertexbuffer)
 	gl.BindBuffer(gl.ARRAY_BUFFER, vertexbuffer)
-	gl.BufferData(gl.ARRAY_BUFFER, len(g_vertex_buffer_data)*4, gl.Ptr(g_vertex_buffer_data), gl.STATIC_DRAW)
+	gl.BufferData(gl.ARRAY_BUFFER, len(vertexbufferdata)*4, gl.Ptr(vertexbufferdata), gl.STATIC_DRAW)
 
 	for !window.ShouldClose() {
 		gl.EnableVertexAttribArray(0)
 		gl.BindBuffer(gl.ARRAY_BUFFER, vertexbuffer)
-		gl.VertexAttribPointer(
-			0,
-			3,
-			gl.FLOAT,
-			false,
-			0,
-			gl.Ptr(nil),
-		)
-
+		gl.VertexAttribPointer(0, 3, gl.FLOAT, false, 0, gl.Ptr(nil))
 		gl.DrawArrays(gl.TRIANGLES, 0, 3)
-
 		gl.DisableVertexAttribArray(0)
 
 		window.SwapBuffers()
