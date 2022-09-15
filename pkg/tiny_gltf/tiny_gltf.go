@@ -8,8 +8,8 @@ import (
 )
 
 type Instance struct {
-	bufferDataList []*BufferData
-	rawData        *rawData
+	parsedBufferDataList []*ParsedBufferData
+	rawData              *rawData
 }
 
 func NewInstanceFromFile(filename string) (*Instance, error) {
@@ -43,7 +43,7 @@ func NewInstance(reader io.Reader) (*Instance, error) {
 	}
 
 	// NOTE: check
-	for _, bufferData := range instance.bufferDataList {
+	for _, bufferData := range instance.parsedBufferDataList {
 		fmt.Printf("%+v\n", bufferData)
 	}
 
@@ -51,13 +51,13 @@ func NewInstance(reader io.Reader) (*Instance, error) {
 }
 
 func (instance *Instance) initData() error {
-	// NOTE: init bufferDataList
+	// NOTE: init parsedBufferDataList
 	for _, accessor := range instance.rawData.Accessors {
 		bufferData, err := NewBufferData(instance.rawData.Buffers, instance.rawData.BufferViews, accessor)
 		if err != nil {
 			return fmt.Errorf("failed NewBufferData: %w", err)
 		}
-		instance.bufferDataList = append(instance.bufferDataList, bufferData)
+		instance.parsedBufferDataList = append(instance.parsedBufferDataList, bufferData)
 	}
 
 	for _, node := range instance.rawData.Scenes[instance.rawData.Scene].Nodes {
@@ -65,12 +65,12 @@ func (instance *Instance) initData() error {
 		for _, prim := range instance.rawData.Meshes[mesh].Primitives {
 			if prim.Indices != nil {
 				// TODO: set index data
-				fmt.Printf("indexdata: %+v\n", instance.bufferDataList[*prim.Indices])
+				fmt.Printf("indexdata: %+v\n", instance.parsedBufferDataList[*prim.Indices])
 			}
 
 			for attribute, index := range prim.Attributes {
 				// TODO: set index data
-				fmt.Printf("%s: %+v\n", attribute, instance.bufferDataList[index])
+				fmt.Printf("%s: %+v\n", attribute, instance.parsedBufferDataList[index])
 			}
 		}
 	}

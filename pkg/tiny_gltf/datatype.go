@@ -40,7 +40,7 @@ type rawBufferData[T AccessorComponentType] struct {
 	data []T
 }
 
-type BufferData struct {
+type ParsedBufferData struct {
 	rawdata           any // NOTE: rawBufferData[AccessorComponentType]
 	componentTypeKind AccessorComponentTypeKind
 	typeKind          AccessorTypeKind
@@ -98,7 +98,7 @@ func newRawBufferData[T AccessorComponentType](dataReader io.Reader, typesize, c
 	return rawBufferData[T]{data: data}, nil
 }
 
-func NewBufferData(buffers []Buffers, bufferViews []BufferViews, accessor Accessors) (*BufferData, error) {
+func NewBufferData(buffers []Buffers, bufferViews []BufferViews, accessor Accessors) (*ParsedBufferData, error) {
 	var rawBuffer any
 	dataCount := accessor.Count
 	componentTypeKind := AccessorComponentTypeKind_UNDEFINED
@@ -158,7 +158,7 @@ func NewBufferData(buffers []Buffers, bufferViews []BufferViews, accessor Access
 		rawBuffer = buffer
 	}
 
-	return &BufferData{
+	return &ParsedBufferData{
 		rawdata:           rawBuffer,
 		count:             dataCount,
 		componentTypeKind: componentTypeKind,
