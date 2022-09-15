@@ -47,6 +47,36 @@ type ParsedBufferData struct {
 	count             int
 }
 
+func (p *ParsedBufferData) GetComponentTypeSize() int {
+	return getAccessorComponentTypeSize(p.componentTypeKind)
+}
+
+func (p *ParsedBufferData) GetTypeSize() int {
+	return getAccessorTypeSize(p.typeKind)
+}
+
+func (p *ParsedBufferData) GetRawDataSize() int {
+	return p.GetComponentTypeSize() * p.GetTypeSize() * p.count
+}
+
+func getAccessorComponentTypeSize(componentTypeKind AccessorComponentTypeKind) int {
+	switch componentTypeKind {
+	case AccessorComponentTypeKind_BYTE:
+		return 1
+	case AccessorComponentTypeKind_UNSIGNED_BYTE:
+		return 1
+	case AccessorComponentTypeKind_SHORT:
+		return 2
+	case AccessorComponentTypeKind_UNSIGNED_SHORT:
+		return 2
+	case AccessorComponentTypeKind_UNSIGNED_INT:
+		return 4
+	case AccessorComponentTypeKind_FLOAT:
+		return 4
+	}
+	return 0
+}
+
 func getAccessorTypeSize(typeKind AccessorTypeKind) int {
 	switch typeKind {
 	case AccessorTypeKind_SCALAR:

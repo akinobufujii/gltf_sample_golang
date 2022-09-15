@@ -5,11 +5,19 @@ import (
 	"fmt"
 	"io"
 	"os"
+
+	"github.com/go-gl/gl/v4.5-core/gl"
 )
 
 type Instance struct {
 	parsedBufferDataList []*ParsedBufferData
+	drawData             []*DrawData
 	rawData              *rawData
+}
+
+type DrawData struct {
+	IndexBufferHandle     *uint32
+	VertexBefferHandleMap map[string]uint32
 }
 
 func NewInstanceFromFile(filename string) (*Instance, error) {
@@ -63,15 +71,33 @@ func (instance *Instance) initData() error {
 	for _, node := range instance.rawData.Scenes[instance.rawData.Scene].Nodes {
 		mesh := instance.rawData.Nodes[node].Mesh
 		for _, prim := range instance.rawData.Meshes[mesh].Primitives {
+			drawdata := new(DrawData)
 			if prim.Indices != nil {
-				// TODO: set index data
-				fmt.Printf("indexdata: %+v\n", instance.parsedBufferDataList[*prim.Indices])
+				// NOTE:  create index data
+				// FIXME: refactor
+				indexBufferData := instance.parsedBufferDataList[*prim.Indices]
+				drawdata.IndexBufferHandle = new(uint32)
+				gl.GenBuffers(1, drawdata.IndexBufferHandle)
+				gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, *drawdata.IndexBufferHandle)
+				gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, indexBufferData.GetRawDataSize(), gl.Ptr(indexBufferData.rawdata), gl.STATIC_DRAW)
+
+				//fmt.Printf("indexdata: %+v\n", instance.parsedBufferDataList[*prim.Indices])
 			}
 
 			for attribute, index := range prim.Attributes {
-				// TODO: set index data
-				fmt.Printf("%s: %+v\n", attribute, instance.parsedBufferDataList[index])
+				// TODO: create vertex data
+				// FIXME: refactor
+				vertexBufferData := instance.parsedBufferDataList[index]
+				vbo := uint32(0)
+				gl.GenBuffers(1, &vbo)
+				gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
+				gl.BufferData(gl.ARRAY_BUFFER, vertexBufferData.GetRawDataSize(), gl.Ptr(vertexBufferData), gl.STATIC_DRAW)
+				drawdata.VertexBefferHandleMap[attribute] = vbo
+
+				//fmt.Printf("%s: %+v\n", attribute, instance.parsedBufferDataList[index])
 			}
+
+			instance.drawData = append(instance.drawData, drawdata)
 		}
 	}
 
